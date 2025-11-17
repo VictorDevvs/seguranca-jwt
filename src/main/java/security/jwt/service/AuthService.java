@@ -1,6 +1,8 @@
 package security.jwt.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import security.jwt.domain.Role;
@@ -17,6 +19,7 @@ public class AuthService {
     private final UsuarioRepository repository;
     private final PasswordEncoder encoder;
     private final JwtService service;
+    private final AuthenticationManager manager;
 
     public AuthResponse registro(RegistroRequest request) {
         Usuario usuario = Usuario.builder()
@@ -34,6 +37,16 @@ public class AuthService {
     }
 
     public AuthResponse auth(AuthRequest request) {
+        manager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.email(), request.senha()
+                )
+        );
 
+        Usuario usuario = repository.findByEmail(request.email()).orElseThrow();
+        String token = service.gerarToken(usuario);
+        return AuthResponse.builder()
+                .token(token)
+                .build();
     }
 }
