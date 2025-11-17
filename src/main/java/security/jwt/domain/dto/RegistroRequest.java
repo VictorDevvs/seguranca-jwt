@@ -13,7 +13,6 @@ public record RegistroRequest(
         String email,
 
         @NotBlank
-        @Min(value = 8, message = "Mínimo 8 caractér")
         String senha
 ) {
 }
