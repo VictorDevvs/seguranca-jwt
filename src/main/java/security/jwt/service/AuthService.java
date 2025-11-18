@@ -39,7 +39,8 @@ public class AuthService {
     public AuthResponse auth(AuthRequest request) {
         manager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.email(), request.senha()
+                        request.email(),
+                        request.senha()
                 )
         );
 
