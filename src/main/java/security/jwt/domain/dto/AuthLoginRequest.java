@@ -3,7 +3,7 @@ package security.jwt.domain.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record AuthRequest(
+public record AuthLoginRequest(
         @NotBlank
         @Email
         String email,
