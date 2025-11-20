@@ -7,10 +7,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import security.jwt.domain.Role;
 import security.jwt.domain.Usuario;
+import security.jwt.domain.dto.AuthRegistroResponse;
 import security.jwt.domain.dto.AuthRequest;
-import security.jwt.domain.dto.AuthResponse;
+import security.jwt.domain.dto.AuthLoginResponse;
 import security.jwt.domain.dto.RegistroRequest;
 import security.jwt.repository.UsuarioRepository;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,12 @@ public class AuthService {
     private final JwtService service;
     private final AuthenticationManager manager;
 
-    public AuthResponse registro(RegistroRequest request) {
+    public AuthRegistroResponse registro(RegistroRequest request) {
+        Optional<Usuario> usuarioExistente = repository.findByEmail(request.email());
+        if(usuarioExistente.isPresent()){
+            throw new IllegalArgumentException("Email já existe no banco de dados!");
+        }
+
         Usuario usuario = Usuario.builder()
                 .nome(request.nome())
                 .email(request.email())
@@ -30,13 +38,14 @@ public class AuthService {
                 .build();
 
         repository.save(usuario);
-        String token = service.gerarToken(usuario);
-        return AuthResponse.builder()
-                .token(token)
+        return AuthRegistroResponse.builder()
+                .id(usuario.getId())
+                .nome(usuario.getNome())
+                .email(usuario.getEmail())
                 .build();
     }
 
-    public AuthResponse auth(AuthRequest request) {
+    public AuthLoginResponse auth(AuthRequest request) {
         manager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.email(),
@@ -46,7 +55,7 @@ public class AuthService {
 
         Usuario usuario = repository.findByEmail(request.email()).orElseThrow();
         String token = service.gerarToken(usuario);
-        return AuthResponse.builder()
+        return AuthLoginResponse.builder()
                 .token(token)
                 .build();
     }
