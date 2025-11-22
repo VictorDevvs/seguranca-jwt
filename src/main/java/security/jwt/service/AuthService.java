@@ -1,24 +1,21 @@
 package security.jwt.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import security.jwt.domain.Role;
 import security.jwt.domain.Usuario;
-import security.jwt.domain.dto.AuthResponse;
 import security.jwt.domain.dto.AuthLoginRequest;
 import security.jwt.domain.dto.AuthLoginResponse;
+import security.jwt.domain.dto.AuthResponse;
 import security.jwt.domain.dto.RegistroRequest;
 import security.jwt.repository.UsuarioRepository;
-
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AuthService {
 
     private final UsuarioRepository repository;
@@ -36,11 +33,10 @@ public class AuthService {
                 .nome(request.nome())
                 .email(request.email())
                 .senha(encoder.encode(request.senha()))
-                .role(Role.COMUM)
+                .role(request.role())
                 .build();
 
         repository.save(usuario);
-        log.info("ROLE = " + usuario.getRole());
         return AuthResponse.builder()
                 .id(usuario.getId())
                 .nome(usuario.getNome())

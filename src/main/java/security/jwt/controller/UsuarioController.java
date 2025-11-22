@@ -10,7 +10,7 @@ import security.jwt.domain.dto.AuthResponse;
 import security.jwt.service.UsuarioService;
 
 @RestController
-@RequestMapping("/usuario")
+@RequestMapping("/api/v1/usuario")
 @RequiredArgsConstructor
 public class UsuarioController {
 

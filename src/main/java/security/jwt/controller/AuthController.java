@@ -23,12 +23,12 @@ public class AuthController {
     private final AuthService service;
 
     @PostMapping("/registro")
-    public ResponseEntity<AuthResponse> registro(@RequestBody @Valid RegistroRequest request){
+    public ResponseEntity<AuthResponse> registroUsuario(@RequestBody @Valid RegistroRequest request){
         return ResponseEntity.ok(service.registro(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthLoginResponse> auth(@RequestBody @Valid AuthLoginRequest request){
+    public ResponseEntity<AuthLoginResponse> authUsuario(@RequestBody @Valid AuthLoginRequest request){
         return ResponseEntity.ok(service.auth(request));
     }
 }
