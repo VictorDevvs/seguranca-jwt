@@ -1,28 +1,27 @@
-# Segurança com JWT
+# Segurança-JWT (backend)
 
-Projeto de exemplo para implementar **autenticação e autorização** usando **JWT (JSON Web Tokens)** em uma aplicação backend com Java / Spring Boot.
+## 🔐 O que é este projeto
 
----
+Este projeto implementa um backend em Java com Spring Boot + Spring Security + JWT para autenticação e autorização de usuários.  
+Suporta:
 
-## 🔐 Visão Geral
-
-Este repositório demonstra como:
-
-- Registrar usuários (signup)  
-- Fazer login (signin)  
-- Gerar e validar tokens JWT  
-- Proteger endpoints REST usando Spring Security    
-- Ter uma arquitetura sem estado (“stateless”) — sem sessões no servidor  
+- Registro de usuário com e-mail/senha  
+- Login com e-mail/senha gerando token JWT  
+- Login via OAuth2 com provedores externos (Google / GitHub)  
+- Endpoints protegidos por token JWT  
+- Endpoint `/me` para retornar dados do usuário logado  
+- Endpoint para buscar usuário por ID (restrito: cada usuário só pode consultar seu próprio ID)  
 
 ---
 
-## 🧱 Tecnologias
+## 🛠 Tecnologias e dependências
 
-- Java  
-- Spring Boot  
-- Spring Security  
-- JWT 
-- Banco de dados em memória para usuários (H2 database) 
-- Lombok
+- Java 21 + Spring Boot  
 - Spring Data JPA
+- Spring web 
+- H2 Database
+- Lombok
 - Validation
+- Spring Security + JWT (io.jsonwebtoken)  
+- OAuth2 Client (Google, GitHub)  
+- Dependências comuns do ecossistema Spring Boot  
