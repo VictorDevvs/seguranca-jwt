@@ -23,8 +23,6 @@ import security.jwt.domain.Usuario;
 import security.jwt.repository.UsuarioRepository;
 import security.jwt.service.JwtService;
 
-import java.util.Optional;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
