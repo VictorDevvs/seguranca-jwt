@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 @Builder
-public record AuthResponse(
+public record UsuarioMeResponse(
         @JsonProperty("id")
         Long id,
         @JsonProperty("nome")

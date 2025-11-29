@@ -14,7 +14,7 @@ public class UsuarioService {
     private final UsuarioRepository repository;
 
     public AuthResponse buscarPorId(Long id){
-        Usuario usuario = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário encontrado"));
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
 
         return AuthResponse.builder()
                 .id(id)

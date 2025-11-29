@@ -1,11 +1,12 @@
 package security.jwt.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import security.jwt.domain.Role;
 import security.jwt.domain.Usuario;
 import security.jwt.domain.dto.AuthLoginRequest;
 import security.jwt.domain.dto.AuthLoginResponse;
@@ -26,14 +27,13 @@ public class AuthService {
     public AuthResponse registro(RegistroRequest request) {
         Optional<Usuario> usuarioExistente = repository.findByEmail(request.email());
         if(usuarioExistente.isPresent()){
-            throw new IllegalArgumentException("Email já existe no banco de dados!");
+            throw new RuntimeException("Email já existe no banco de dados!");
         }
 
         Usuario usuario = Usuario.builder()
                 .nome(request.nome())
                 .email(request.email())
                 .senha(encoder.encode(request.senha()))
-                .role(request.role())
                 .build();
 
         repository.save(usuario);
@@ -44,18 +44,20 @@ public class AuthService {
                 .build();
     }
 
-    public AuthLoginResponse auth(AuthLoginRequest request) {
-        manager.authenticate(
+    public AuthLoginResponse login(AuthLoginRequest request) {
+        Authentication auth = manager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.email(),
                         request.senha()
                 )
         );
 
-        Usuario usuario = repository.findByEmail(request.email()).orElseThrow();
+        Usuario usuario = (Usuario) auth.getPrincipal();
+
         String token = service.gerarToken(usuario);
         return AuthLoginResponse.builder()
                 .token(token)
+                .nome(usuario.getNome())
                 .build();
     }
 }

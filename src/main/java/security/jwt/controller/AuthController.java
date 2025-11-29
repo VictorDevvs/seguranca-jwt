@@ -2,15 +2,13 @@ package security.jwt.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import security.jwt.domain.dto.AuthResponse;
+import org.springframework.web.bind.annotation.*;
 import security.jwt.domain.dto.AuthLoginRequest;
 import security.jwt.domain.dto.AuthLoginResponse;
+import security.jwt.domain.dto.AuthResponse;
 import security.jwt.domain.dto.RegistroRequest;
 import security.jwt.service.AuthService;
 
@@ -18,17 +16,18 @@ import security.jwt.service.AuthService;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Validated
+@CrossOrigin(origins = {"http://localhost:5500", "http://127.0.0.1:5500"})
 public class AuthController {
 
     private final AuthService service;
 
     @PostMapping("/registro")
-    public ResponseEntity<AuthResponse> registroUsuario(@RequestBody @Valid RegistroRequest request){
-        return ResponseEntity.ok(service.registro(request));
+    public ResponseEntity<AuthResponse> registro(@RequestBody @Valid RegistroRequest request){
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.registro(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthLoginResponse> authUsuario(@RequestBody @Valid AuthLoginRequest request){
-        return ResponseEntity.ok(service.auth(request));
+    public ResponseEntity<AuthLoginResponse> login(@RequestBody @Valid AuthLoginRequest request){
+        return ResponseEntity.ok(service.login(request));
     }
 }

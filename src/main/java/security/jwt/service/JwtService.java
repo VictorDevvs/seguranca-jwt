@@ -17,7 +17,7 @@ public class JwtService {
 
     // HARD CODE - ESSE PROJETO É APENAS PARA FINS DE APRENDIZADO. EM UM AMBIENTE REAL, NUNCA EXPONHA CHAVES SECRETAS
     private static final String SECRET_KEY = "oBC9P8xqR7bC2XgB8kCsJp6V3zT7FfA9LdZ3wN+WgKs=";
-    private long tokenExp = 9000000;
+    private final long TOKEN_EXP = 1000 * 60 * 60;
 
     public String extrairEmail(String token) {
         return extrairClaim(token, Claims::getSubject);
@@ -33,7 +33,7 @@ public class JwtService {
                 .claims(claimsExtra)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + tokenExp))
+                .expiration(new Date(System.currentTimeMillis() + TOKEN_EXP))
                 .signWith(chaveAssinatura())
                 .compact();
     }
