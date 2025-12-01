@@ -19,8 +19,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import security.jwt.domain.Email;
 import security.jwt.domain.Usuario;
 import security.jwt.repository.UsuarioRepository;
+import security.jwt.service.EmailService;
 import security.jwt.service.JwtService;
 
 @Configuration
@@ -33,7 +35,7 @@ public class SecurityConfig {
     private final AuthenticationProvider provider;
     private final JwtService service;
     private final UsuarioRepository repository;
-    private final PasswordEncoder encoder;
+    private final EmailService emailService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -96,6 +98,10 @@ public class SecurityConfig {
                 );
 
                 repository.save(usuario);
+
+                Email emailObj = new Email(finalEmail, "Bem-vindo ao Sistema",
+                        "Olá, " + finalNome + "! Seu login via " + provider + " foi realizado com sucesso.");
+                emailService.sendEmail(emailObj);
 
                 return oAuth2User;
             }

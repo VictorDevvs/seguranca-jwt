@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -28,6 +30,12 @@ public class Usuario implements UserDetails {
 
     @Column(nullable = false)
     private String senha;
+
+    private String tokenVerificacaoEmail;
+
+    private LocalDateTime expiracaoToken;
+
+    private boolean emailVerificado = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

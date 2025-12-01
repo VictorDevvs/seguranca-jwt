@@ -53,6 +53,10 @@ public class AuthService {
 
         Usuario usuario = (Usuario) auth.getPrincipal();
 
+        if(!usuario.isEmailVerificado()){
+            throw new RuntimeException("EMAIL NÃO VERIFICADO!");
+        }
+
         String token = service.gerarToken(usuario);
         return AuthLoginResponse.builder()
                 .token(token)

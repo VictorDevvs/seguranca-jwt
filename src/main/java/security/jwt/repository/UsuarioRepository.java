@@ -2,10 +2,10 @@ package security.jwt.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import security.jwt.domain.Usuario;
-
 import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     Optional<Usuario> findByEmail(String email);
+    Usuario findByTokenVerificacaoEmail(String token);
 }
