@@ -9,12 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.RedirectView;
 import security.jwt.domain.Email;
 import security.jwt.domain.Usuario;
-import security.jwt.domain.dto.AuthLoginRequest;
-import security.jwt.domain.dto.AuthLoginResponse;
-import security.jwt.domain.dto.AuthResponse;
-import security.jwt.domain.dto.RegistroRequest;
+import security.jwt.domain.dto.*;
 import security.jwt.repository.UsuarioRepository;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,6 +26,7 @@ public class AuthService {
     private final EmailService emailService;
     private final VerificarEmailService verificarEmailService;
     private final String linkAtivacao = "http://localhost:8080/api/v1/auth/ativar?token=";
+    private final String linkRedefinicao = "http://localhost:5500/index.html?resetToken=";
 
     public AuthResponse registro(RegistroRequest request) {
         Optional<Usuario> usuarioExistente = repository.findByEmail(request.email());
@@ -90,8 +87,37 @@ public class AuthService {
         }
     }
 
-    public void redefinirSenha(String email){
+    public void redefinirsenha(EmailRequest emailRequest){
+        String email = emailRequest.email();
+        Usuario usuario = repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
 
+        String token = UUID.randomUUID().toString();
+        usuario.setTokenVerificacaoSenha(token);
+        usuario.setExpiracaoToken(LocalDateTime.now().plusHours(24));
+        repository.save(usuario);
+
+        Email emailRedefinicao = new Email(email, "Redefinição de Senha",
+                "Clique no link para redefinir sua senha: " + linkRedefinicao + token);
+
+        emailService.sendEmail(emailRedefinicao);
     }
 
+    public void novaSenha(NovaSenhaRequest request){
+        Usuario usuario = repository.findByTokenVerificacaoSenha(request.token());
+
+        if(usuario == null || usuario.getExpiracaoToken().isBefore(LocalDateTime.now())){
+            throw new RuntimeException("Token inválido ou expirado!");
+        }
+
+        if(!request.senha().equals(request.senhaConfirmacao())){
+            throw new RuntimeException("As senhas não coincidem!");
+        }
+
+        usuario.setSenha(encoder.encode(request.senha()));
+        usuario.setSenhaRedefinida(true);
+        usuario.setTokenVerificacaoSenha(null);
+        usuario.setExpiracaoToken(null);
+        repository.save(usuario);
+    }
 }

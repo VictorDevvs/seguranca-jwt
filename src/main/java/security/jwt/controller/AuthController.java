@@ -7,19 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import security.jwt.domain.Email;
-import security.jwt.domain.Usuario;
-import security.jwt.domain.dto.AuthLoginRequest;
-import security.jwt.domain.dto.AuthLoginResponse;
-import security.jwt.domain.dto.AuthResponse;
-import security.jwt.domain.dto.RegistroRequest;
-import security.jwt.repository.UsuarioRepository;
+import security.jwt.domain.dto.*;
 import security.jwt.service.AuthService;
-import security.jwt.service.EmailService;
-import security.jwt.service.VerificarEmailService;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -29,7 +18,6 @@ import java.util.UUID;
 public class AuthController {
 
     private final AuthService service;
-    private final VerificarEmailService verificarEmailService;
 
     @PostMapping("/registro")
     public ResponseEntity<AuthResponse> registro(@RequestBody @Valid RegistroRequest request){
@@ -44,5 +32,17 @@ public class AuthController {
     @GetMapping("/ativar")
     public RedirectView ativar(@RequestParam String token){
         return service.ativar(token);
+    }
+
+    @PostMapping("redefinir-senha")
+    public ResponseEntity<Void> redefinirSenha(@RequestBody EmailRequest email){
+        service.redefinirsenha(email);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/nova-senha")
+    public ResponseEntity<Void> novaSenha(@RequestBody @Valid NovaSenhaRequest request){
+        service.novaSenha(request);
+        return ResponseEntity.ok().build();
     }
 }
