@@ -6,13 +6,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import security.jwt.domain.Email;
 import security.jwt.domain.Usuario;
 import security.jwt.domain.dto.AuthLoginRequest;
 import security.jwt.domain.dto.AuthLoginResponse;
 import security.jwt.domain.dto.AuthResponse;
 import security.jwt.domain.dto.RegistroRequest;
 import security.jwt.repository.UsuarioRepository;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,8 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final JwtService service;
     private final AuthenticationManager manager;
+    private final EmailService emailService;
+    private final String linkAtivacao = "http://localhost:8080/api/v1/auth/ativar?token=";
 
     public AuthResponse registro(RegistroRequest request) {
         Optional<Usuario> usuarioExistente = repository.findByEmail(request.email());
@@ -29,13 +35,22 @@ public class AuthService {
             throw new RuntimeException("Email já existe no banco de dados!");
         }
 
+        String token = UUID.randomUUID().toString();
         Usuario usuario = Usuario.builder()
                 .nome(request.nome())
                 .email(request.email())
                 .senha(encoder.encode(request.senha()))
+                .tokenVerificacaoEmail(token)
+                .expiracaoToken(LocalDateTime.now().plusHours(24))
                 .build();
 
         repository.save(usuario);
+
+        Email email = new Email(request.email(), "Olá, " + request.nome(),
+                "Clique no link para ativar sua conta: " + linkAtivacao + token);
+
+        emailService.sendEmail(email);
+
         return AuthResponse.builder()
                 .id(usuario.getId())
                 .nome(usuario.getNome())
@@ -63,4 +78,6 @@ public class AuthService {
                 .nome(usuario.getNome())
                 .build();
     }
+
+
 }

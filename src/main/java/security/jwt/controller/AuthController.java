@@ -32,21 +32,10 @@ public class AuthController {
     private final EmailService emailService;
     private final UsuarioRepository repository;
     private final VerificarEmailService verificarEmailService;
-    private final String linkAtivacao = "http://localhost:8080/api/v1/auth/ativar?token=";
 
     @PostMapping("/registro")
     public ResponseEntity<AuthResponse> registro(@RequestBody @Valid RegistroRequest request){
-        String token = UUID.randomUUID().toString();
-        AuthResponse response = service.registro(request);
-        Usuario usuario = repository.findByEmail(request.email()).orElseThrow();
-        usuario.setTokenVerificacaoEmail(token);
-        usuario.setExpiracaoToken(LocalDateTime.now().plusHours(24));
-        repository.save(usuario);
-
-        Email email = new Email(request.email(), "Olá, " + request.nome(),
-                "Clique no link para ativar sua conta: " + linkAtivacao + token);
-        emailService.sendEmail(email);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.registro(request));
     }
 
     @PostMapping("/login")

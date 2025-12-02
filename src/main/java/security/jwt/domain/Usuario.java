@@ -33,9 +33,13 @@ public class Usuario implements UserDetails {
 
     private String tokenVerificacaoEmail;
 
+    private String tokenVerificacaoSenha;
+
     private LocalDateTime expiracaoToken;
 
     private boolean emailVerificado = false;
+
+    private boolean senhaRedefinida = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
