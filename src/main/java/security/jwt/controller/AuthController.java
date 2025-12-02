@@ -29,8 +29,6 @@ import java.util.UUID;
 public class AuthController {
 
     private final AuthService service;
-    private final EmailService emailService;
-    private final UsuarioRepository repository;
     private final VerificarEmailService verificarEmailService;
 
     @PostMapping("/registro")
@@ -45,11 +43,6 @@ public class AuthController {
 
     @GetMapping("/ativar")
     public RedirectView ativar(@RequestParam String token){
-        boolean verificado = verificarEmailService.verificarEmail(token);
-        if(verificado){
-            return new RedirectView("http://localhost:5500/index.html?status=ok");
-        } else {
-            return new RedirectView("http://localhost:5500/index.html?status=erro");
-        }
+        return service.ativar(token);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.RedirectView;
 import security.jwt.domain.Email;
 import security.jwt.domain.Usuario;
 import security.jwt.domain.dto.AuthLoginRequest;
@@ -27,6 +28,7 @@ public class AuthService {
     private final JwtService service;
     private final AuthenticationManager manager;
     private final EmailService emailService;
+    private final VerificarEmailService verificarEmailService;
     private final String linkAtivacao = "http://localhost:8080/api/v1/auth/ativar?token=";
 
     public AuthResponse registro(RegistroRequest request) {
@@ -79,5 +81,17 @@ public class AuthService {
                 .build();
     }
 
+    public RedirectView ativar(String token){
+        boolean verificado = verificarEmailService.verificarEmail(token);
+        if(verificado){
+            return new RedirectView("http://localhost:5500/index.html?status=ok");
+        } else {
+            return new RedirectView("http://localhost:5500/index.html?status=erro");
+        }
+    }
+
+    public void redefinirSenha(String email){
+
+    }
 
 }
