@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import security.jwt.domain.Usuario;
 import security.jwt.repository.UsuarioRepository;
-
 import java.time.LocalDateTime;
 
 @Service
