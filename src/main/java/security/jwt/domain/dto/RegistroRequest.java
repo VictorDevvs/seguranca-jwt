@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 @Builder
@@ -18,7 +19,8 @@ public record RegistroRequest(
         String email,
 
         @NotBlank(message = "Senha é obrigatória")
-        @Min(value = 6, message = "Senha deve ter no mínimo 6 caracteres")
+        @Min(value = 8, message = "Senha deve ter no mínimo 8 caracteres")
+        @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])[\\w $*&@#]{8,}")
         @JsonProperty("senha")
         String senha
 ) {
